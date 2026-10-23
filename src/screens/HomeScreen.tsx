@@ -11,6 +11,46 @@ import { FocusableCard } from '../ui/FocusableCard';
 import { SHOWS, Show } from '../data/shows';
 import { useNavigation } from '../navigation/NavigationContext';
 
+const ShowPoster: React.FC<{ show: Show }> = ({ show }) => {
+  const [hasImageError, setHasImageError] = React.useState(false);
+
+  return (
+    <View
+      style={[
+        styles.posterPlaceholder,
+        { backgroundColor: show.posterBg },
+      ]}
+    >
+      {show.posterUri && !hasImageError ? (
+        <Image
+          source={{ uri: show.posterUri }}
+          style={styles.posterImage}
+          resizeMode="cover"
+          onError={() => setHasImageError(true)}
+        />
+      ) : (
+        <View style={styles.placeholderContent}>
+          <View
+            style={[
+              styles.genrePill,
+              { borderColor: show.accentColor },
+            ]}
+          >
+            <Text
+              style={[styles.genreText, { color: show.accentColor }]}
+            >
+              {show.genre}
+            </Text>
+          </View>
+          <Text style={styles.placeholderInitials}>
+            {show.title.charAt(0)}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
 export const HomeScreen: React.FC = () => {
   const { navigate } = useNavigation();
 
@@ -46,39 +86,7 @@ export const HomeScreen: React.FC = () => {
               style={styles.showCard}
               accessibilityLabel={`Select ${show.title}`}
             >
-              {/* Poster with fallback colored placeholder */}
-              <View
-                style={[
-                  styles.posterPlaceholder,
-                  { backgroundColor: show.posterBg },
-                ]}
-              >
-                {show.posterUri ? (
-                  <Image
-                    source={{ uri: show.posterUri }}
-                    style={styles.posterImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.placeholderContent}>
-                    <View
-                      style={[
-                        styles.genrePill,
-                        { borderColor: show.accentColor },
-                      ]}
-                    >
-                      <Text
-                        style={[styles.genreText, { color: show.accentColor }]}
-                      >
-                        {show.genre}
-                      </Text>
-                    </View>
-                    <Text style={styles.placeholderInitials}>
-                      {show.title.charAt(0)}
-                    </Text>
-                  </View>
-                )}
-              </View>
+              <ShowPoster show={show} />
 
               {/* Show Details */}
               <View style={styles.showInfo}>
