@@ -6,32 +6,35 @@ import { FocusableCard } from '../ui/FocusableCard';
 import { Chip } from '../ui/Chip';
 import { SHOWS } from '../data/shows';
 import {
-  sampleViewers,
   getGroupPosition,
   buildSpoilerSafeContext,
   Viewer,
 } from '../data/episodes';
 import { useNavigation } from '../navigation/NavigationContext';
+import { useViewers } from '../context/ViewerContext';
 
 export const RecapScreen: React.FC = () => {
   const { params, navigate, goBack } = useNavigation();
+  const { viewers } = useViewers();
   const showId = params.showId || 'chrono-key';
   const show = SHOWS.find((s) => s.id === showId) || SHOWS[0];
 
-  const [selectedViewerId, setSelectedViewerId] = useState<string>('group');
+  const [selectedViewerId, setSelectedViewerId] = useState<string>(
+    params.mode === 'group' || !params.viewerId ? 'group' : params.viewerId
+  );
   const [selectedQuestion, setSelectedQuestion] = useState<{
     question: string;
     answer: string;
   } | null>(null);
 
   const isGroup = selectedViewerId === 'group';
-  const activeViewer: Viewer | undefined = sampleViewers.find(
+  const activeViewer: Viewer | undefined = viewers.find(
     (v) => v.id === selectedViewerId
   );
 
   // If params specified a custom position (e.g. from Player), honor it when in viewer mode
   const activePosition = isGroup
-    ? getGroupPosition(sampleViewers)
+    ? getGroupPosition(viewers)
     : {
         episodeNumber: params.episodeNumber || activeViewer?.episodeNumber || 1,
         positionSec: params.positionSec !== undefined ? params.positionSec : (activeViewer?.positionSec || 0),
@@ -81,7 +84,7 @@ export const RecapScreen: React.FC = () => {
           style={styles.viewerBtn}
         />
 
-        {sampleViewers.map((viewer) => {
+        {viewers.map((viewer) => {
           const isSelected = selectedViewerId === viewer.id;
           const mins = Math.floor(viewer.positionSec / 60);
           return (

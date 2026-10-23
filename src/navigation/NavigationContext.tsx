@@ -45,8 +45,18 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       return false; // Let TV OS handle exit if on Home
     };
 
+    if (!BackHandler || typeof BackHandler.addEventListener !== 'function') {
+      return;
+    }
+
     const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    return () => subscription.remove();
+    return () => {
+      if (subscription && typeof subscription.remove === 'function') {
+        subscription.remove();
+      } else if (BackHandler && typeof BackHandler.removeEventListener === 'function') {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      }
+    };
   }, [canGoBack, history]);
 
   return (

@@ -5,6 +5,7 @@ import {
   NavigationProvider,
   useNavigation,
 } from './navigation/NavigationContext';
+import { ViewerProvider } from './context/ViewerContext';
 import { HomeScreen } from './screens/HomeScreen';
 import { ShowScreen } from './screens/ShowScreen';
 import { PlayerScreen } from './screens/PlayerScreen';
@@ -29,7 +30,9 @@ const RootNavigator = () => {
 export const App = () => {
   return (
     <NavigationProvider>
-      <RootNavigator />
+      <ViewerProvider>
+        <RootNavigator />
+      </ViewerProvider>
     </NavigationProvider>
   );
 };
