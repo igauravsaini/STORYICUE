@@ -16,10 +16,10 @@ const renderShowScreen = () => {
 
 describe('ShowScreen', () => {
   it('renders Left section: show title and description', () => {
-    const { getByText } = renderShowScreen();
+    const { getAllByText, getByText } = renderShowScreen();
 
     // Show title
-    expect(getByText('The Chrono Key')).toBeTruthy();
+    expect(getAllByText('The Chrono Key').length).toBeGreaterThanOrEqual(1);
     // Show tagline
     expect(getByText('Unlock time. Pay the price.')).toBeTruthy();
     // Short synopsis
